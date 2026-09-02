@@ -7,6 +7,7 @@ public class PlayerManager : ServiceUser<PlayerManager>
 
     private PlayerMovement movement;
     private PlayerAttack attack;
+    private Vector2 moveInput;
 
     void Awake()
     {
@@ -17,22 +18,17 @@ public class PlayerManager : ServiceUser<PlayerManager>
 
     void Update()
     {
-        var keyboard = Keyboard.current;
-        if (keyboard == null) return;
+        movement.Move(moveInput);
+    }
 
-        Vector2 input = Vector2.zero;
+    public void OnMove(InputValue value)
+    {
+        moveInput = value.Get<Vector2>();
+    }
 
-        if (keyboard.wKey.isPressed) input.y += 1;
-        if (keyboard.sKey.isPressed) input.y -= 1;
-        if (keyboard.aKey.isPressed) input.x -= 1;
-        if (keyboard.dKey.isPressed) input.x += 1;
-
-        movement.Move(input);
-
-        if (keyboard.spaceKey.wasPressedThisFrame)
-        {
-            attack.PerformAttack();
-        }
+    public void OnAttack(InputValue value)
+    {
+        attack.PerformAttack();
     }
 }
 
