@@ -143,7 +143,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorSystem
   door: {fileID: 1689418269295613208}
-  speed: 1
+  speed: 4
   distance: 3.5
 --- !u!1 &4048893167386062744
 GameObject:
