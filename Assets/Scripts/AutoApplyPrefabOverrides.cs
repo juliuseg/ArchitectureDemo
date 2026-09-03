@@ -6,13 +6,35 @@ using UnityEngine.SceneManagement;
 [InitializeOnLoad]
 public static class AutoApplyPrefabOverrides
 {
+    private static bool isReapplying = false;
+
     static AutoApplyPrefabOverrides()
     {
-        EditorSceneManager.sceneSaving += OnSceneSaving;
+        EditorSceneManager.sceneSaved += OnSceneSaved;
     }
 
-    private static void OnSceneSaving(Scene scene, string path)
+    private static void OnSceneSaved(Scene scene)
     {
+        if (isReapplying)
+            return;
+
+        bool appliedAnything = ApplyEnvironmentOverrides(scene);
+
+        if (appliedAnything)
+        {
+            isReapplying = true;
+            EditorApplication.delayCall += () =>
+            {
+                EditorSceneManager.MarkSceneDirty(scene);
+                EditorSceneManager.SaveScene(scene);
+                isReapplying = false;
+            };
+        }
+    }
+
+    private static bool ApplyEnvironmentOverrides(Scene scene)
+    {
+        bool applied = false;
         GameObject[] roots = scene.GetRootGameObjects();
 
         foreach (GameObject root in roots)
@@ -30,8 +52,18 @@ public static class AutoApplyPrefabOverrides
                 if (instanceRoot == null)
                     continue;
 
-                PrefabUtility.ApplyPrefabInstance(instanceRoot, InteractionMode.AutomatedAction);
+                var mods = PrefabUtility.GetPropertyModifications(instanceRoot);
+                bool hasAddedObjects = PrefabUtility.GetAddedGameObjects(instanceRoot).Count > 0;
+                bool hasAddedComponents = PrefabUtility.GetAddedComponents(instanceRoot).Count > 0;
+
+                if ((mods != null && mods.Length > 0) || hasAddedObjects || hasAddedComponents)
+                {
+                    PrefabUtility.ApplyPrefabInstance(instanceRoot, InteractionMode.AutomatedAction);
+                    applied = true;
+                }
             }
         }
+
+        return applied;
     }
 }
