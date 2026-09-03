@@ -2,10 +2,16 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 [InitializeOnLoad]
 public static class AutoApplyPrefabOverrides
 {
+    private static readonly string[] TargetSceneNames =
+    {
+        "_Main"
+    };
+
     private static bool isReapplying = false;
 
     static AutoApplyPrefabOverrides()
@@ -16,6 +22,9 @@ public static class AutoApplyPrefabOverrides
     private static void OnSceneSaved(Scene scene)
     {
         if (isReapplying)
+            return;
+
+        if (!TargetSceneNames.Contains(scene.name))
             return;
 
         bool appliedAnything = ApplyEnvironmentOverrides(scene);
