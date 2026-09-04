@@ -306,6 +306,15 @@ public static class HierarchyDirtyIndicator
         GameObject goSource = PrefabUtility.GetCorrespondingObjectFromSource(go);
         GameObject rootSource = PrefabUtility.GetCorrespondingObjectFromSource(root);
 
+        // AutoApplyPrefabOverrides always applies at the OUTERMOST prefab instance
+        // root (PrefabUtility.GetOutermostPrefabInstanceRoot), not at the nearest
+        // one. So if `root` itself sits inside a tagged ancestor, `root`'s own
+        // tag (if any) never actually gets used - the real apply happens higher
+        // up. From that outer apply's point of view, root's position is just an
+        // ordinary child property, not a "default override" left behind in the
+        // scene - it gets applied like everything else.
+        bool rootOwnMotionStaysInScene = !HasTaggedAncestor(root.transform);
+
         var defaults = new List<string>();
         var reals = new List<string>();
 
@@ -330,7 +339,10 @@ public static class HierarchyDirtyIndicator
 
                 string entry = mod.propertyPath + "=" + mod.value + "@" + reference;
 
-                if (IsDefaultOverride(mod, target == rootSource))
+                bool isDefault = rootOwnMotionStaysInScene
+                    && IsDefaultOverride(mod, target == rootSource);
+
+                if (isDefault)
                     defaults.Add(entry);
                 else
                     reals.Add(entry);

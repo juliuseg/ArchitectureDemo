@@ -22,4 +22,3 @@ Gives editor feedback on what will change the scene file:
 - 🟠 **Orange** — this object will modify the scene file. Applies to all objects and prefabs *without* the tag. Note: it also applies to tagged prefabs when you change their position/rotation, since that's a scene change, not a prefab change.
 - 🔵 **Blue** — you changed a tagged prefab, and on save the system will auto-apply that change to the prefab first, so the scene itself stays unchanged.
 
-TO-DO, bug: If a both parent and child are tagged and you make a change to the child, it will become orange. It should be blue. 
