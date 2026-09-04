@@ -1,6 +1,7 @@
-if (!(Test-Path -Path $env:UNITY_BUILD_DIR)) {
-    New-Item -ItemType Directory -Path $env:UNITY_BUILD_DIR | Out-Null
-    Write-Output "Created build directory: $env:UNITY_BUILD_DIR"
-} else {
-    Write-Output "Build directory already exists: $env:UNITY_BUILD_DIR"
-}
+#!/bin/bash
+if [ ! -d "$UNITY_BUILD_DIR" ]; then
+    mkdir -p "$UNITY_BUILD_DIR"
+    echo "Created build directory: $UNITY_BUILD_DIR"
+else
+    echo "Build directory already exists: $UNITY_BUILD_DIR"
+fi
