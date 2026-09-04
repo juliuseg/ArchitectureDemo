@@ -7,7 +7,7 @@ using System.Linq;
 [InitializeOnLoad]
 public static class AutoApplyPrefabOverrides
 {
-    private static readonly string[] TargetSceneNames =
+    internal static readonly string[] TargetSceneNames =
     {
         "_Main"
     };
@@ -37,6 +37,7 @@ public static class AutoApplyPrefabOverrides
                 EditorSceneManager.MarkSceneDirty(scene);
                 EditorSceneManager.SaveScene(scene);
                 isReapplying = false;
+                EditorApplication.RepaintHierarchyWindow();
             };
         }
     }
@@ -48,9 +49,9 @@ public static class AutoApplyPrefabOverrides
 
         foreach (GameObject root in roots)
         {
-            AutoApplyEnvironment[] markers = root.GetComponentsInChildren<AutoApplyEnvironment>(true);
+            AutoApplyPrefab[] markers = root.GetComponentsInChildren<AutoApplyPrefab>(true);
 
-            foreach (AutoApplyEnvironment marker in markers)
+            foreach (AutoApplyPrefab marker in markers)
             {
                 GameObject go = marker.gameObject;
 

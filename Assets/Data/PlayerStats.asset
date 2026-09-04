@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c3e5c4dea624192ba727358dc58e73, type: 3}
   m_Name: PlayerStats
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
-  moveSpeed: 4
+  moveSpeed: 5
   attackDamage: 10
